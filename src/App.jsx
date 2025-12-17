@@ -3,28 +3,8 @@ import Navbar from './components/Navbar';
 import StatCard from './components/StatCard';
 import UploadZone from './components/UploadZone';
 import ActivityLog from './components/ActivityLog';
-import { Image, FileText, Music, Video, Archive, AppWindow, File } from 'lucide-react';
-
-const CATEGORIES = ['Images', 'Documents', 'Audio', 'Videos', 'Archives', 'Code', 'Executables', 'Others'];
-
-// Helper to determine category
-const getCategoryFromPath = (filePath) => {
-    // Simple logic matching backend or extending it
-    // Note: The backend likely does the actual sorting, but we need to guess category for UI stats
-    // unless we parse the path or file extension.
-    const ext = filePath.split('.').pop().toLowerCase();
-
-    // Mapping common extensions to categories for UI feedback
-    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'].includes(ext)) return 'Images';
-    if (['pdf', 'doc', 'docx', 'txt', 'xlsx', 'ppt', 'pptx'].includes(ext)) return 'Documents';
-    if (['mp3', 'wav', 'flac', 'aac'].includes(ext)) return 'Audio';
-    if (['mp4', 'mkv', 'avi', 'mov'].includes(ext)) return 'Videos';
-    if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return 'Archives';
-    if (['exe', 'msi', 'bat', 'sh'].includes(ext)) return 'Executables';
-    if (['py', 'js', 'html', 'css', 'java', 'cpp', 'c', 'php'].includes(ext)) return 'Code';
-
-    return 'Others';
-};
+import CategoryView from './components/CategoryView';
+import { Image, FileText, Music, Video, Archive, Code, File } from 'lucide-react';
 
 function App() {
     const [darkMode, setDarkMode] = useState(() => {
@@ -38,8 +18,14 @@ function App() {
     const [path, setPath] = useState('');
     const [status, setStatus] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // State for dashboard visuals
+    // View state
+    const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' or 'category'
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [categoryFiles, setCategoryFiles] = useState([]);
+
+    // Dashboard data
     const [activities, setActivities] = useState([]);
     const [stats, setStats] = useState({
         Images: 0,
@@ -47,6 +33,8 @@ function App() {
         Audio: 0,
         Videos: 0,
         Archives: 0,
+        Code: 0,
+        Executables: 0,
         Others: 0
     });
 
@@ -63,6 +51,24 @@ function App() {
 
     const toggleTheme = () => setDarkMode(!darkMode);
 
+    // Fetch stats from backend
+    const fetchStats = async (folderPath) => {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/stats', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: folderPath })
+            });
+            const data = await response.json();
+            if (data.status === 'success') {
+                setStats(data.stats);
+            }
+        } catch (error) {
+            console.error('Failed to fetch stats:', error);
+        }
+    };
+
+    // Handle organize by path
     const handleOrganize = async () => {
         if (!path.trim()) {
             setStatus({ type: 'error', message: 'Please enter a valid folder path.' });
@@ -86,34 +92,21 @@ function App() {
 
                 // Process moved files to update UI
                 const newActivities = (data.moved || []).map(item => {
-                    // Backend returns "filename -> Category"
                     const parts = item.split(' -> ');
                     const fileName = parts[0];
-                    // Use backend's category if available, else guess
-                    const category = parts.length > 1 ? parts[1] : getCategoryFromPath(fileName);
-                    return { fileName, category };
+                    const category = parts.length > 1 ? parts[1] : 'Others';
+                    return {
+                        fileName,
+                        category,
+                        action: 'moved',
+                        timestamp: new Date().toISOString()
+                    };
                 });
 
-                // Update Activities Log (prepend new ones)
                 setActivities(prev => [...newActivities, ...prev]);
 
-                // Update Stats
-                const newStats = { ...stats };
-                newActivities.forEach(act => {
-                    if (newStats[act.category] !== undefined) {
-                        newStats[act.category]++;
-                    } else {
-                        // Map specific categories to general ones if needed, or add to 'Others'
-                        if (act.category === 'Code' || act.category === 'Executables') {
-                            // If we want to track these specifically we need to add them to stats state
-                            // For now, let's just group odd ones or add dynamic support if we want
-                            newStats['Others']++;
-                        } else {
-                            newStats['Others']++;
-                        }
-                    }
-                });
-                setStats(newStats);
+                // Fetch updated stats
+                await fetchStats(path.trim());
 
             } else {
                 setStatus({ type: 'error', message: data.message });
@@ -126,6 +119,139 @@ function App() {
         }
     };
 
+    // Handle file upload (drag and drop)
+    const handleFileUpload = async (files) => {
+        if (!files || files.length === 0) return;
+
+        setLoading(true);
+        setStatus(null);
+
+        const formData = new FormData();
+        files.forEach(file => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                setStatus({ type: 'success', message: `Uploaded and organized ${files.length} file(s)` });
+
+                // Add upload activities
+                const uploadActivities = (data.uploaded || []).map(fileName => ({
+                    fileName,
+                    category: 'Uploads',
+                    action: 'uploaded',
+                    timestamp: new Date().toISOString()
+                }));
+
+                // Add moved activities
+                const movedActivities = (data.moved || []).map(item => {
+                    const parts = item.split(' -> ');
+                    const fileName = parts[0];
+                    const category = parts.length > 1 ? parts[1] : 'Others';
+                    return {
+                        fileName,
+                        category,
+                        action: 'moved',
+                        timestamp: new Date().toISOString()
+                    };
+                });
+
+                setActivities(prev => [...uploadActivities, ...movedActivities, ...prev]);
+
+                // Fetch updated stats from uploads folder
+                const uploadFolder = path.trim() || 'uploads';
+                await fetchStats(uploadFolder);
+
+                // Update path if not set
+                if (!path.trim()) {
+                    setPath(uploadFolder);
+                }
+            } else {
+                setStatus({ type: 'error', message: data.message || 'Upload failed' });
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            setStatus({ type: 'error', message: `Failed to upload files: ${error.message}` });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Handle category card click
+    const handleCategoryClick = async (category) => {
+        if (!path.trim()) {
+            setStatus({ type: 'error', message: 'Please set a folder path first.' });
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/files/${category}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: path.trim() })
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                setSelectedCategory(category);
+                setCategoryFiles(data.files);
+                setCurrentView('category');
+            } else {
+                setStatus({ type: 'error', message: data.message });
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus({ type: 'error', message: 'Failed to fetch category files.' });
+        }
+    };
+
+    // Handle file deletion
+    const handleFileDelete = async (category, filename) => {
+        if (!path.trim()) return;
+
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/files/${category}/${filename}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ path: path.trim() })
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'success') {
+                // Update category files
+                setCategoryFiles(prev => prev.filter(f => f.name !== filename));
+
+                // Add delete activity
+                const deleteActivity = {
+                    fileName: filename,
+                    category: category,
+                    action: 'deleted',
+                    timestamp: new Date().toISOString()
+                };
+                setActivities(prev => [deleteActivity, ...prev]);
+
+                // Update stats
+                await fetchStats(path.trim());
+
+                setStatus({ type: 'success', message: data.message });
+            } else {
+                setStatus({ type: 'error', message: data.message });
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus({ type: 'error', message: 'Failed to delete file.' });
+        }
+    };
+
     // Card configurations
     const statCards = [
         { title: 'Images', icon: Image, color: 'rose', dataKey: 'Images' },
@@ -133,12 +259,39 @@ function App() {
         { title: 'Audio', icon: Music, color: 'amber', dataKey: 'Audio' },
         { title: 'Videos', icon: Video, color: 'purple', dataKey: 'Videos' },
         { title: 'Archives', icon: Archive, color: 'indigo', dataKey: 'Archives' },
-        { title: 'Others', icon: File, color: 'green', dataKey: 'Others' },
+        { title: 'Code', icon: Code, color: 'green', dataKey: 'Code' },
     ];
 
+    // Render category view
+    if (currentView === 'category') {
+        return (
+            <>
+                <Navbar
+                    darkMode={darkMode}
+                    toggleTheme={toggleTheme}
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                />
+                <CategoryView
+                    category={selectedCategory}
+                    files={categoryFiles}
+                    onBack={() => setCurrentView('dashboard')}
+                    onDelete={handleFileDelete}
+                    folderPath={path}
+                />
+            </>
+        );
+    }
+
+    // Render dashboard view
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors font-sans pb-12">
-            <Navbar darkMode={darkMode} toggleTheme={toggleTheme} />
+            <Navbar
+                darkMode={darkMode}
+                toggleTheme={toggleTheme}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+            />
 
             <div className="max-w-7xl mx-auto px-6 pt-10">
 
@@ -152,6 +305,8 @@ function App() {
                             icon={card.icon}
                             color={card.color}
                             delay={index * 100}
+                            onClick={() => handleCategoryClick(card.title)}
+                            isActive={selectedCategory === card.title}
                         />
                     ))}
                 </div>
@@ -165,6 +320,7 @@ function App() {
                             path={path}
                             setPath={setPath}
                             handleOrganize={handleOrganize}
+                            handleFileUpload={handleFileUpload}
                             loading={loading}
                             status={status}
                         />
@@ -172,7 +328,10 @@ function App() {
 
                     {/* Right: Activity Log */}
                     <div className="h-full">
-                        <ActivityLog activities={activities} />
+                        <ActivityLog
+                            activities={activities}
+                            searchQuery={searchQuery}
+                        />
                     </div>
                 </div>
             </div>

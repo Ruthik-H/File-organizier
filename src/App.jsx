@@ -285,7 +285,10 @@ function App() {
 
     // Render dashboard view
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors font-sans pb-12">
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 transition-colors font-sans pb-12" style={{
+            backgroundAttachment: 'fixed',
+            fontFamily: "'Fredoka', sans-serif"
+        }}>
             <Navbar
                 darkMode={darkMode}
                 toggleTheme={toggleTheme}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UploadCloud, FolderOpen, ArrowRight } from 'lucide-react';
+import { UploadCloud, FolderOpen, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function UploadZone({ path, setPath, handleOrganize, handleFileUpload, loading, status }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -33,20 +33,22 @@ export default function UploadZone({ path, setPath, handleOrganize, handleFileUp
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center transition-colors">
+        <div className="bg-white rounded-3xl p-8 shadow-2xl border-4 border-pink-200 text-center transition-all hover:shadow-pink-200 animate-bounce-in" style={{
+            backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #fff0f8 50%, #f0f9ff 100%)'
+        }}>
             <div className="max-w-xl mx-auto">
                 <div className="mb-6 relative group cursor-pointer inline-block">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-400 to-violet-400 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
-                    <div className="relative w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mx-auto">
-                        <UploadCloud className="w-10 h-10 text-indigo-600 dark:text-indigo-400" />
+                    <div className="absolute -inset-2 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition duration-300 animate-pulse-glow"></div>
+                    <div className="relative w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-full flex items-center justify-center mx-auto border-4 border-pink-300 shadow-xl transform hover:scale-110 transition-all animate-float">
+                        <UploadCloud className="w-12 h-12 text-pink-500 animate-wiggle" />
                     </div>
                 </div>
 
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                <h2 className="text-4xl font-bold text-gradient-rainbow mb-3 animate-fade-in" style={{ fontFamily: "'Pacifico', cursive" }}>
                     Organize Your Files
                 </h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-8">
-                    Enter a folder path or drag and drop files to organize automatically.
+                <p className="text-lg text-purple-600 mb-8 font-medium" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                    ✨ Drag, drop & watch the magic happen! ✨
                 </p>
 
                 {/* Drag and Drop Zone */}
@@ -55,50 +57,58 @@ export default function UploadZone({ path, setPath, handleOrganize, handleFileUp
                     onDragLeave={handleDragLeave}
                     onDragOver={handleDragOver}
                     onDrop={handleDrop}
-                    className={`relative mb-6 p-8 border-2 border-dashed rounded-2xl transition-all ${isDragging
-                            ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 scale-105'
-                            : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400'
-                        }`}
+                    className={`relative mb-6 p-10 border-4 border-dashed rounded-3xl transition-all duration-300 ${isDragging
+                            ? 'border-pink-500 bg-gradient-to-br from-pink-100 to-purple-100 scale-105 shadow-2xl animate-rainbow-border'
+                            : 'border-pink-300 hover:border-purple-400 bg-gradient-to-br from-pink-50 to-purple-50'
+                        } fun-hover`}
                 >
                     <div className="text-center">
-                        <UploadCloud className={`w-12 h-12 mx-auto mb-3 transition-colors ${isDragging ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400'
-                            }`} />
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            {isDragging ? 'Drop files here' : 'Drag and drop files here'}
+                        {isDragging ? (
+                            <Sparkles className="w-16 h-16 mx-auto mb-4 text-pink-500 animate-spin" />
+                        ) : (
+                            <UploadCloud className="w-16 h-16 mx-auto mb-4 text-purple-400 animate-float" />
+                        )}
+                        <p className="text-xl font-bold mb-2" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                            <span className="text-gradient-rainbow">
+                                {isDragging ? '🎉 Drop files here! 🎉' : '📁 Drag and drop files here'}
+                            </span>
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                            Files will be automatically organized by type
+                        <p className="text-base text-purple-500 font-medium" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                            Files will be magically organized by type!
                         </p>
                     </div>
                 </div>
 
                 {/* Input Area for folder path */}
-                <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-200"></div>
-                    <div className="relative bg-white dark:bg-gray-900 rounded-xl p-2 flex items-center border border-gray-200 dark:border-gray-700">
-                        <FolderOpen className="w-6 h-6 text-gray-400 ml-3" />
+                <div className="relative group mb-6">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-300 animate-pulse-glow"></div>
+                    <div className="relative bg-white rounded-2xl p-3 flex items-center border-4 border-pink-200 shadow-lg hover:shadow-xl transition-all">
+                        <FolderOpen className="w-7 h-7 text-pink-500 ml-2 animate-wiggle" />
                         <input
                             type="text"
                             value={path}
                             onChange={(e) => setPath(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleOrganize()}
                             placeholder="Or paste folder path here (e.g., C:\Downloads)"
-                            className="flex-1 px-4 py-3 bg-transparent text-gray-800 dark:text-gray-100 outline-none text-base placeholder-gray-400"
+                            className="flex-1 px-4 py-3 bg-transparent text-gray-800 outline-none text-lg placeholder-purple-400 font-medium"
+                            style={{ fontFamily: "'Fredoka', sans-serif" }}
                         />
                         <button
                             onClick={handleOrganize}
                             disabled={loading || !path.trim()}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white px-6 py-3 rounded-lg font-medium transition-all shadow-md hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2"
+                            className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-pink-600 hover:via-purple-600 hover:to-blue-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2 shimmer-button transform hover:scale-105"
+                            style={{ fontFamily: "'Fredoka', sans-serif" }}
                         >
                             {loading ? (
                                 <>
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
                                     Processing...
                                 </>
                             ) : (
                                 <>
-                                    Start
-                                    <ArrowRight className="w-4 h-4" />
+                                    <Sparkles className="w-5 h-5" />
+                                    Start Magic!
+                                    <ArrowRight className="w-5 h-5" />
                                 </>
                             )}
                         </button>
@@ -107,11 +117,13 @@ export default function UploadZone({ path, setPath, handleOrganize, handleFileUp
 
                 {/* Status Message */}
                 {status && (
-                    <div className={`mt-6 p-4 rounded-xl text-sm font-medium animate-fade-in ${status.type === 'success'
-                            ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300 border border-green-200 dark:border-green-800'
-                            : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800'
-                        }`}>
+                    <div className={`p-4 rounded-2xl text-base font-bold animate-bounce-in border-4 ${status.type === 'success'
+                            ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-400 shadow-lg shadow-green-200'
+                            : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-400 shadow-lg shadow-red-200'
+                        }`} style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                        {status.type === 'success' ? '✨ ' : '⚠️ '}
                         {status.message}
+                        {status.type === 'success' ? ' ✨' : ''}
                     </div>
                 )}
             </div>

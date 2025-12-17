@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Trash2, FileText, Image, Music, Video, Archive, Code, File, Download } from 'lucide-react';
+import { ArrowLeft, Trash2, FileText, Image, Music, Video, Archive, Code, File, Sparkles } from 'lucide-react';
 
 const icons = {
     Images: Image,
@@ -43,24 +43,29 @@ export default function CategoryView({ category, files, onBack, onDelete, folder
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 transition-colors" style={{ backgroundAttachment: 'fixed' }}>
             <div className="max-w-6xl mx-auto px-6 py-8">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-8 animate-bounce-in">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={onBack}
-                            className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                            className="p-3 rounded-2xl bg-gradient-to-r from-pink-400 to-purple-400 text-white hover:from-pink-500 hover:to-purple-500 transition-all shadow-lg hover:shadow-xl transform hover:scale-110"
                         >
-                            <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                            <ArrowLeft className="w-6 h-6" />
                         </button>
-                        <div className="flex items-center gap-3">
-                            <div className="p-3 rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
-                                <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                        <div className="flex items-center gap-4">
+                            <div className="p-4 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-400 shadow-xl animate-float">
+                                <Icon className="w-8 h-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{category}</h1>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">{files.length} files</p>
+                                <h1 className="text-4xl font-bold text-gradient-rainbow" style={{ fontFamily: "'Pacifico', cursive" }}>
+                                    {category}
+                                </h1>
+                                <p className="text-lg text-purple-600 font-medium flex items-center gap-2" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                                    <Sparkles className="w-4 h-4" />
+                                    {files.length} magical files
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -68,44 +73,52 @@ export default function CategoryView({ category, files, onBack, onDelete, folder
 
                 {/* Files Grid */}
                 {files.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-64 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700">
-                        <Icon className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" />
-                        <p className="text-gray-500 dark:text-gray-400">No files in this category</p>
+                    <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border-4 border-pink-200 shadow-xl animate-float" style={{
+                        backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #fff0f8 100%)'
+                    }}>
+                        <Icon className="w-20 h-20 text-pink-300 mb-4 animate-wiggle" />
+                        <p className="text-xl font-bold text-purple-500" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                            No files in this category yet! 📁
+                        </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {files.map((file, index) => (
                             <div
                                 key={index}
-                                className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all group"
+                                className="bg-white rounded-3xl p-5 border-4 border-pink-200 hover:border-purple-300 hover:shadow-2xl transition-all group fun-hover shadow-lg animate-fade-in"
+                                style={{
+                                    backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #fff0f8 100%)',
+                                    animationDelay: `${index * 50}ms`
+                                }}
                             >
-                                <div className="flex items-start justify-between mb-3">
+                                <div className="flex items-start justify-between mb-4">
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700">
-                                            <Icon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+                                        <div className="p-3 rounded-2xl bg-gradient-to-br from-pink-400 to-purple-400 shadow-md group-hover:scale-110 transition-transform">
+                                            <Icon className="w-6 h-6 text-white" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="font-medium text-gray-800 dark:text-white truncate" title={file.name}>
+                                            <p className="font-bold text-gray-800 truncate text-lg" title={file.name} style={{ fontFamily: "'Fredoka', sans-serif" }}>
                                                 {file.name}
                                             </p>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                                            <p className="text-sm text-purple-500 font-medium" style={{ fontFamily: "'Fredoka', sans-serif" }}>
                                                 {formatSize(file.size)}
                                             </p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => handleDelete(file.name)}
-                                        className={`p-2 rounded-lg transition-all ${deleteConfirm === file.name
-                                                ? 'bg-red-500 text-white'
-                                                : 'hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500'
+                                        className={`p-3 rounded-xl transition-all transform hover:scale-110 shadow-md ${deleteConfirm === file.name
+                                                ? 'bg-gradient-to-r from-red-500 to-rose-500 text-white scale-110 animate-wiggle'
+                                                : 'bg-gradient-to-r from-pink-100 to-purple-100 hover:from-red-400 hover:to-rose-400 text-pink-600 hover:text-white'
                                             }`}
-                                        title={deleteConfirm === file.name ? 'Click again to confirm' : 'Delete file'}
+                                        title={deleteConfirm === file.name ? 'Click again to confirm!' : 'Delete file'}
                                     >
-                                        <Trash2 className="w-4 h-4" />
+                                        <Trash2 className="w-5 h-5" />
                                     </button>
                                 </div>
-                                <div className="text-xs text-gray-400 dark:text-gray-500">
-                                    Modified: {formatDate(file.modified)}
+                                <div className="text-sm text-purple-400 font-medium bg-purple-50 rounded-xl p-2" style={{ fontFamily: "'Fredoka', sans-serif" }}>
+                                    📅 {formatDate(file.modified)}
                                 </div>
                             </div>
                         ))}

@@ -1,179 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pacifico&family=Caveat:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @import "tailwindcss";
 
 @layer theme {
   :root {
-    --font-sans: 'Fredoka', sans-serif;
-    --font-display: 'Pacifico', cursive;
-    --font-handwritten: 'Caveat', cursive;
+    --font-sans: 'Inter', sans-serif;
   }
 }
 
 @layer base {
   body {
     font-family: var(--font-sans);
-    @apply antialiased text-gray-900 bg-gradient-to-br from-pink-50 via-white to-blue-50;
-    background-attachment: fixed;
+    @apply antialiased text-gray-800 bg-gray-50 transition-colors duration-300;
   }
 
-  /* Dark mode disabled - focus on bright white UI */
-  .dark {
-    @apply bg-white text-gray-900;
-  }
-}
-
-/* Floating animations */
-@keyframes float {
-
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-15px);
+  /* Functional Dark Mode */
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
   }
 }
 
-@keyframes pulse-glow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 20px rgba(255, 105, 180, 0.4),
-      0 0 40px rgba(147, 51, 234, 0.2);
-  }
-
-  50% {
-    box-shadow: 0 0 30px rgba(255, 105, 180, 0.6),
-      0 0 60px rgba(147, 51, 234, 0.4);
-  }
-}
-
-@keyframes wiggle {
-
-  0%,
-  100% {
-    transform: rotate(-2deg);
-  }
-
-  50% {
-    transform: rotate(2deg);
-  }
-}
-
-@keyframes bounce-in {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-
-  50% {
-    transform: scale(1.05);
-  }
-
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes rainbow-border {
-  0% {
-    border-color: #ff6b9d;
-  }
-
-  25% {
-    border-color: #ffa726;
-  }
-
-  50% {
-    border-color: #66bb6a;
-  }
-
-  75% {
-    border-color: #42a5f5;
-  }
-
-  100% {
-    border-color: #ab47bc;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* Utility classes for animations */
-@utility animate-fade-in {
-  animation: fadeIn 0.5s ease-out;
-}
-
-@utility animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-@utility animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
-}
-
-@utility animate-wiggle {
-  animation: wiggle 1s ease-in-out infinite;
-}
-
-@utility animate-bounce-in {
-  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@utility animate-rainbow-border {
-  animation: rainbow-border 3s linear infinite;
-}
-
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-pink-50 rounded-full;
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-gradient-to-b from-pink-400 to-purple-400 rounded-full;
+  @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  @apply from-pink-500 to-purple-500;
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-700 hover:bg-gray-600;
 }
 
-/* Doodle-style borders */
-.doodle-border {
-  position: relative;
-  border: 3px solid transparent;
-  background:
-    linear-gradient(white, white) padding-box,
-    linear-gradient(135deg, #ff6b9d, #ffa726, #66bb6a, #42a5f5, #ab47bc) border-box;
-  border-radius: 25px;
+/* Glass effect utilities */
+.glass {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-sm;
 }
 
-/* Shimmer effect for buttons */
-.shimmer-button {
-  background: linear-gradient(90deg,
-      #ff6b9d 0%,
-      #ffa726 25%,
-      #66bb6a 50%,
-      #42a5f5 75%,
-      #ab47bc 100%);
-  background-size: 200% 100%;
-  animation: shimmer 3s linear infinite;
+.dark .glass {
+  @apply bg-gray-800/70 border-gray-700/50 shadow-none;
 }
 
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -186,42 +59,6 @@
   }
 }
 
-/* Fun hover effects */
-.fun-hover {
-  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-.fun-hover:hover {
-  transform: scale(1.05) rotate(1deg);
-}
-
-/* Colorful text gradients */
-.text-gradient-rainbow {
-  background: linear-gradient(135deg, #ff6b9d, #ffa726, #66bb6a, #42a5f5, #ab47bc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shimmer 5s linear infinite;
-  background-size: 200% 100%;
-}
-
-.text-gradient-pink {
-  background: linear-gradient(135deg, #ff6b9d, #ff9a9e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-blue {
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-purple {
-  background: linear-gradient(135deg, #a18cd1, #fbc2eb);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+@utility animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
 }

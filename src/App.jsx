@@ -4,7 +4,7 @@ import StatCard from './components/StatCard';
 import UploadZone from './components/UploadZone';
 import ActivityLog from './components/ActivityLog';
 import CategoryView from './components/CategoryView';
-import { Image, FileText, Music, Video, Archive, Code, File } from 'lucide-react';
+import { Image, FileText, Music, Video, Archive, Code } from 'lucide-react';
 
 function App() {
     const [darkMode, setDarkMode] = useState(() => {
@@ -265,7 +265,7 @@ function App() {
     // Render category view
     if (currentView === 'category') {
         return (
-            <>
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors font-sans">
                 <Navbar
                     darkMode={darkMode}
                     toggleTheme={toggleTheme}
@@ -279,16 +279,13 @@ function App() {
                     onDelete={handleFileDelete}
                     folderPath={path}
                 />
-            </>
+            </div>
         );
     }
 
     // Render dashboard view
     return (
-        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 transition-colors font-sans pb-12" style={{
-            backgroundAttachment: 'fixed',
-            fontFamily: "'Fredoka', sans-serif"
-        }}>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors font-sans pb-12">
             <Navbar
                 darkMode={darkMode}
                 toggleTheme={toggleTheme}

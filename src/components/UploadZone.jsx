@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { UploadCloud, FolderOpen, ArrowRight, Sparkles } from 'lucide-react';
+import { UploadCloud, FolderOpen, ArrowRight, File } from 'lucide-react';
 
 export default function UploadZone({ path, setPath, handleOrganize, handleFileUpload, loading, status }) {
     const [isDragging, setIsDragging] = useState(false);
@@ -33,100 +33,84 @@ export default function UploadZone({ path, setPath, handleOrganize, handleFileUp
     };
 
     return (
-        <div className="bg-white rounded-3xl p-8 shadow-2xl border-4 border-pink-200 text-center transition-all hover:shadow-pink-200 animate-bounce-in" style={{
-            backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #fff0f8 50%, #f0f9ff 100%)'
-        }}>
-            <div className="max-w-xl mx-auto">
-                <div className="mb-6 relative group cursor-pointer inline-block">
-                    <div className="absolute -inset-2 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-full blur-xl opacity-50 group-hover:opacity-75 transition duration-300 animate-pulse-glow"></div>
-                    <div className="relative w-24 h-24 bg-gradient-to-br from-pink-100 to-purple-100 rounded-full flex items-center justify-center mx-auto border-4 border-pink-300 shadow-xl transform hover:scale-110 transition-all animate-float">
-                        <UploadCloud className="w-12 h-12 text-pink-500 animate-wiggle" />
-                    </div>
-                </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm border border-gray-200 dark:border-gray-700 h-full flex flex-col justify-center text-center">
 
-                <h2 className="text-4xl font-bold text-gradient-rainbow mb-3 animate-fade-in" style={{ fontFamily: "'Pacifico', cursive" }}>
+            <div className="mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
                     Organize Your Files
                 </h2>
-                <p className="text-lg text-purple-600 mb-8 font-medium" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-                    ✨ Drag, drop & watch the magic happen! ✨
+                <p className="text-gray-500 dark:text-gray-400">
+                    Select a folder path or drop files directly to organize them instantly.
                 </p>
-
-                {/* Drag and Drop Zone */}
-                <div
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragOver={handleDragOver}
-                    onDrop={handleDrop}
-                    className={`relative mb-6 p-10 border-4 border-dashed rounded-3xl transition-all duration-300 ${isDragging
-                            ? 'border-pink-500 bg-gradient-to-br from-pink-100 to-purple-100 scale-105 shadow-2xl animate-rainbow-border'
-                            : 'border-pink-300 hover:border-purple-400 bg-gradient-to-br from-pink-50 to-purple-50'
-                        } fun-hover`}
-                >
-                    <div className="text-center">
-                        {isDragging ? (
-                            <Sparkles className="w-16 h-16 mx-auto mb-4 text-pink-500 animate-spin" />
-                        ) : (
-                            <UploadCloud className="w-16 h-16 mx-auto mb-4 text-purple-400 animate-float" />
-                        )}
-                        <p className="text-xl font-bold mb-2" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-                            <span className="text-gradient-rainbow">
-                                {isDragging ? '🎉 Drop files here! 🎉' : '📁 Drag and drop files here'}
-                            </span>
-                        </p>
-                        <p className="text-base text-purple-500 font-medium" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-                            Files will be magically organized by type!
-                        </p>
-                    </div>
-                </div>
-
-                {/* Input Area for folder path */}
-                <div className="relative group mb-6">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-300 animate-pulse-glow"></div>
-                    <div className="relative bg-white rounded-2xl p-3 flex items-center border-4 border-pink-200 shadow-lg hover:shadow-xl transition-all">
-                        <FolderOpen className="w-7 h-7 text-pink-500 ml-2 animate-wiggle" />
-                        <input
-                            type="text"
-                            value={path}
-                            onChange={(e) => setPath(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleOrganize()}
-                            placeholder="Or paste folder path here (e.g., C:\Downloads)"
-                            className="flex-1 px-4 py-3 bg-transparent text-gray-800 outline-none text-lg placeholder-purple-400 font-medium"
-                            style={{ fontFamily: "'Fredoka', sans-serif" }}
-                        />
-                        <button
-                            onClick={handleOrganize}
-                            disabled={loading || !path.trim()}
-                            className="bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 hover:from-pink-600 hover:via-purple-600 hover:to-blue-600 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-2xl hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 flex items-center gap-2 shimmer-button transform hover:scale-105"
-                            style={{ fontFamily: "'Fredoka', sans-serif" }}
-                        >
-                            {loading ? (
-                                <>
-                                    <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                                    Processing...
-                                </>
-                            ) : (
-                                <>
-                                    <Sparkles className="w-5 h-5" />
-                                    Start Magic!
-                                    <ArrowRight className="w-5 h-5" />
-                                </>
-                            )}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Status Message */}
-                {status && (
-                    <div className={`p-4 rounded-2xl text-base font-bold animate-bounce-in border-4 ${status.type === 'success'
-                            ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-green-400 shadow-lg shadow-green-200'
-                            : 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-400 shadow-lg shadow-red-200'
-                        }`} style={{ fontFamily: "'Fredoka', sans-serif" }}>
-                        {status.type === 'success' ? '✨ ' : '⚠️ '}
-                        {status.message}
-                        {status.type === 'success' ? ' ✨' : ''}
-                    </div>
-                )}
             </div>
+
+            {/* Drag and Drop Zone */}
+            <div
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                className={`relative mb-8 p-12 border-2 border-dashed rounded-xl transition-all duration-200 ${isDragging
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-gray-300 dark:border-gray-600 hover:border-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                    }`}
+            >
+                <div className="flex flex-col items-center">
+                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                        <UploadCloud className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                        {isDragging ? 'Drop files here!' : 'Drag and drop files here'}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        or select a folder path below
+                    </p>
+                </div>
+            </div>
+
+            {/* Input Area for folder path */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full max-w-2xl mx-auto">
+                <div className="relative flex-1">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <FolderOpen className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                        type="text"
+                        value={path}
+                        onChange={(e) => setPath(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleOrganize()}
+                        placeholder="Enter folder path (e.g., C:\Downloads)"
+                        className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-colors"
+                    />
+                </div>
+                <button
+                    onClick={handleOrganize}
+                    disabled={loading || !path.trim()}
+                    className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+                >
+                    {loading ? (
+                        <>
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                            Processing...
+                        </>
+                    ) : (
+                        <>
+                            Start Organizing
+                            <ArrowRight className="ml-2 w-5 h-5" />
+                        </>
+                    )}
+                </button>
+            </div>
+
+            {/* Status Message */}
+            {status && (
+                <div className={`mt-6 p-4 rounded-lg text-sm font-medium ${status.type === 'success'
+                    ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800'
+                    : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
+                    }`}>
+                    {status.message}
+                </div>
+            )}
         </div>
     );
 }

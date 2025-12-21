@@ -1,13 +1,13 @@
 import React from 'react';
 
-export default function StatCard({ title, count, icon: Icon, color, delay, onClick, isActive }) {
+export default function StatCard({ title, count, icon: Icon, color, onClick, isActive }) {
     const colorStyles = {
-        blue: { bg: 'from-blue-400 to-cyan-400', ring: 'ring-blue-400', shadow: 'shadow-blue-300' },
-        green: { bg: 'from-emerald-400 to-green-400', ring: 'ring-emerald-400', shadow: 'shadow-emerald-300' },
-        amber: { bg: 'from-amber-400 to-orange-400', ring: 'ring-amber-400', shadow: 'shadow-amber-300' },
-        purple: { bg: 'from-violet-400 to-purple-400', ring: 'ring-violet-400', shadow: 'shadow-violet-300' },
-        rose: { bg: 'from-rose-400 to-pink-400', ring: 'ring-rose-400', shadow: 'shadow-rose-300' },
-        indigo: { bg: 'from-indigo-400 to-blue-500', ring: 'ring-indigo-400', shadow: 'shadow-indigo-300' },
+        blue: { bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-600 dark:text-blue-400', icon: 'text-blue-600 dark:text-blue-400' },
+        green: { bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-600 dark:text-green-400', icon: 'text-green-600 dark:text-green-400' },
+        amber: { bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-600 dark:text-amber-400', icon: 'text-amber-600 dark:text-amber-400' },
+        purple: { bg: 'bg-purple-50 dark:bg-purple-900/20', text: 'text-purple-600 dark:text-purple-400', icon: 'text-purple-600 dark:text-purple-400' },
+        rose: { bg: 'bg-rose-50 dark:bg-rose-900/20', text: 'text-rose-600 dark:text-rose-400', icon: 'text-rose-600 dark:text-rose-400' },
+        indigo: { bg: 'bg-indigo-50 dark:bg-indigo-900/20', text: 'text-indigo-600 dark:text-indigo-400', icon: 'text-indigo-600 dark:text-indigo-400' },
     };
 
     const style = colorStyles[color] || colorStyles.blue;
@@ -15,31 +15,27 @@ export default function StatCard({ title, count, icon: Icon, color, delay, onCli
     return (
         <div
             onClick={onClick}
-            className={`bg-white rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 hover:rotate-1 cursor-pointer border-4 ${isActive ? `border-pink-400 ${style.ring} ring-4 ring-offset-2 animate-pulse-glow` : 'border-transparent'
-                } fun-hover animate-bounce-in ${style.shadow}`}
-            style={{
-                animationDelay: `${delay}ms`,
-                backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #ffe5f5 100%)'
-            }}
+            className={`bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border ${isActive ? 'border-blue-500 ring-1 ring-blue-500' : 'border-gray-100 dark:border-gray-700'
+                }`}
         >
             <div className="flex justify-between items-start mb-4">
                 <div>
-                    <p className="text-sm font-bold text-pink-500 mb-2 uppercase tracking-wide" style={{ fontFamily: "'Fredoka', sans-serif" }}>
-                        {title}
-                    </p>
-                    <h3 className="text-4xl font-bold text-gradient-rainbow animate-pulse" style={{ fontFamily: "'Pacifico', cursive" }}>
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
                         {count}
                     </h3>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                        {title}
+                    </p>
                 </div>
-                <div className={`p-4 rounded-2xl bg-gradient-to-br ${style.bg} shadow-lg transform hover:scale-110 transition-transform animate-float`}>
-                    <Icon className="w-7 h-7 text-white" />
+                <div className={`p-3 rounded-lg ${style.bg}`}>
+                    <Icon className={`w-6 h-6 ${style.icon}`} />
                 </div>
             </div>
 
-            {/* Rainbow progress bar */}
-            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+            {/* Simple progress bar */}
+            <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
                 <div
-                    className="h-full rounded-full bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 transition-all duration-1000 shimmer-button"
+                    className={`h-full rounded-full ${style.text.replace('text-', 'bg-')} transition-all duration-1000`}
                     style={{ width: count > 0 ? '75%' : '0%' }}
                 ></div>
             </div>
